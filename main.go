@@ -2,21 +2,28 @@ package main
 
 import "fmt"
 
-type mapa struct {
-	size int
-	map0 [2][2]obj
-}
-
-func newMapa(o [2][2]obj) mapa {
-	return mapa{
-		map0: o,
-	}
-}
-
 type obj struct {
 	x         int
 	y         int
 	typeOfObj string
+}
+
+type mapa struct {
+	size int
+	map0 [3][3]obj
+}
+
+func newMapaStr(o [3][3]string) mapa {
+	var result mapa
+	result.size = 3
+	for i := 0; i < result.size; i++ {
+		for j := 0; j < result.size; j++ {
+			result.map0[i][j].typeOfObj = o[i][j]
+			result.map0[i][j].x = i
+			result.map0[i][j].y = j
+		}
+	}
+	return result
 }
 
 func (m mapa) writeMap() {
@@ -30,6 +37,28 @@ func (m mapa) writeMap() {
 }
 
 func main() {
+	psevdoMapStr := [3][3]string{
+		{"Г", "¯", "˥"},
+		{"|", "*", "|"},
+		{"L", "_", "˩"},
+	}
+	psevdoMap := newMapaStr(psevdoMapStr)
+	psevdoMap.writeMap()
+}
+
+//----------------
+/*
+
+
+func newMapa(o [3][3]obj) mapa {
+	return mapa{
+		map0: o,
+	}
+}
+
+
+*/
+/*
 	o00 := obj{
 		x:         0,
 		y:         0,
@@ -58,9 +87,9 @@ func main() {
 	m0 := newMapa(matrix)
 	m0.size = 2
 	fmt.Println(m0)
-	m0.writeMap()
-	/*
-		fmt.Println("101")
-		fmt.Println("\033[2J")
-		fmt.Println("102")*/
-}
+	m0.writeMap()*/
+
+/*
+	fmt.Println("101")
+	fmt.Println("\033[2J")
+	fmt.Println("102")*/
