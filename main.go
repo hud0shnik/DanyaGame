@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"time"
+)
 
 type obj struct {
 	x         int
@@ -10,12 +13,12 @@ type obj struct {
 
 type mapa struct {
 	size int
-	map0 [3][3]obj
+	map0 [8][8]obj
 }
 
-func newMapaStr(o [3][3]string) mapa {
+func newMapaStr(o [8][8]string) mapa {
 	var result mapa
-	result.size = 3
+	result.size = 8
 	for i := 0; i < result.size; i++ {
 		for j := 0; j < result.size; j++ {
 			result.map0[i][j].typeOfObj = o[i][j]
@@ -34,16 +37,56 @@ func (m mapa) writeMap() {
 		}
 		fmt.Print("\n")
 	}
+	time.Sleep(time.Second / 60)
 }
-
+func (m *mapa) movePlayer(x int, y int, pl *obj) {
+	m.map0[pl.x][pl.y].typeOfObj = " "
+	m.map0[x][y].typeOfObj = pl.typeOfObj
+	pl.x, pl.y = x, y
+}
 func main() {
-	psevdoMapStr := [3][3]string{
-		{"Г", "¯", "˥"},
-		{"|", "*", "|"},
-		{"L", "_", "˩"},
+	player := obj{
+		x:         1,
+		y:         1,
+		typeOfObj: "o",
+	}
+	psevdoMapStr := [8][8]string{
+		{"Г", "¯", "¯", "¯", "¯", "¯", "¯", "˥"},
+		{"|", " ", " ", " ", " ", " ", " ", "|"},
+		{"|", " ", " ", " ", " ", " ", " ", "|"},
+		{"|", " ", " ", " ", " ", " ", " ", "|"},
+		{"|", " ", " ", " ", " ", " ", " ", "|"},
+		{"|", " ", " ", " ", " ", " ", " ", "|"},
+		{"|", " ", " ", " ", " ", " ", " ", "|"},
+		{"L", "_", "_", "_", "_", "_", "_", "˩"},
 	}
 	psevdoMap := newMapaStr(psevdoMapStr)
-	psevdoMap.writeMap()
+	for {
+		for j := 1; j < 7; j++ {
+			for i := 1; i < 7; i++ {
+				psevdoMap.movePlayer(j, i, &player)
+				psevdoMap.writeMap()
+
+			}
+			for i := 5; i > 0; i-- {
+				psevdoMap.movePlayer(j, i, &player)
+				psevdoMap.writeMap()
+
+			}
+		}
+		for j := 6; j > 0; j-- {
+			for i := 1; i < 7; i++ {
+				psevdoMap.movePlayer(j, i, &player)
+				psevdoMap.writeMap()
+
+			}
+			for i := 5; i > 0; i-- {
+				psevdoMap.movePlayer(j, i, &player)
+				psevdoMap.writeMap()
+
+			}
+		}
+	}
 }
 
 //----------------
