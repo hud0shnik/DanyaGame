@@ -11,39 +11,44 @@ type obj struct {
 	typeOfObj string
 }
 
-type mapa struct {
-	size int
-	map0 [8][8]obj
+type room struct {
+	size   int
+	matrix [8][8]obj
 }
 
-func newMapaStr(o [8][8]string) mapa {
-	var result mapa
-	result.size = 8
+func newRoomStr(o [8][8]string) room {
+	var result room
+	result.size = len(o)
 	for i := 0; i < result.size; i++ {
 		for j := 0; j < result.size; j++ {
-			result.map0[i][j].typeOfObj = o[i][j]
-			result.map0[i][j].x = i
-			result.map0[i][j].y = j
+			result.matrix[i][j].typeOfObj = o[i][j]
+			result.matrix[i][j].x = i
+			result.matrix[i][j].y = j
 		}
 	}
 	return result
 }
 
-func (m mapa) writeMap() {
+func (m room) writeMap() {
 	fmt.Println("\033[2J") //only in bash
 	for i := 0; i < m.size; i++ {
 		for j := 0; j < m.size; j++ {
-			o := m.map0[i][j]
+			o := m.matrix[i][j]
 			fmt.Print(o.typeOfObj)
 		}
 		fmt.Print("\n")
 	}
 	time.Sleep(time.Second / 60)
 }
-func (m *mapa) movePlayer(x int, y int, pl *obj) {
-	m.map0[pl.x][pl.y].typeOfObj = " "
-	m.map0[x][y].typeOfObj = pl.typeOfObj
-	pl.x, pl.y = x, y
+func (m *room) movePlayer(x int, y int, pl *obj) {
+	if m.matrix[x][y].typeOfObj == "*" {
+
+	} else {
+		m.matrix[pl.x][pl.y].typeOfObj = " "
+		m.matrix[x][y].typeOfObj = pl.typeOfObj
+		pl.x, pl.y = x, y
+	}
+	m.writeMap()
 }
 func main() {
 	player := obj{
@@ -51,6 +56,7 @@ func main() {
 		y:         1,
 		typeOfObj: "o",
 	}
+	var key string
 	psevdoMapStr := [8][8]string{
 		{"*", "*", "*", "*", "*", "*", "*", "*"},
 		{"*", " ", " ", " ", " ", " ", " ", "*"},
@@ -61,8 +67,30 @@ func main() {
 		{"*", " ", " ", " ", " ", " ", " ", "*"},
 		{"*", "*", "*", "*", "*", "*", "*", "*"},
 	}
-	psevdoMap := newMapaStr(psevdoMapStr)
+	psevdoMap := newRoomStr(psevdoMapStr)
+	psevdoMap.movePlayer(1, 1, &player)
 	for {
+		fmt.Scanf("%s\n", &key)
+		switch key[0] {
+		case 'w':
+			psevdoMap.movePlayer(player.x-1, player.y, &player)
+		case 'a':
+			psevdoMap.movePlayer(player.x, player.y-1, &player)
+		case 's':
+			psevdoMap.movePlayer(player.x+1, player.y, &player)
+		case 'd':
+			psevdoMap.movePlayer(player.x, player.y+1, &player)
+		default:
+			return
+		}
+	}
+}
+
+//---------------- old things
+
+/*
+
+for {
 		for j := 1; j < 7; j++ {
 			for i := 1; i < 7; i++ {
 				psevdoMap.movePlayer(j, i, &player)
@@ -83,16 +111,14 @@ func main() {
 				psevdoMap.writeMap()
 			}
 		}
-	}
-}
+	}*/
 
-//---------------- old things
 /*
 
 
-func newMapa(o [3][3]obj) mapa {
-	return mapa{
-		map0: o,
+func newroom(o [3][3]obj) room {
+	return room{
+		matrix: o,
 	}
 }
 
@@ -124,7 +150,7 @@ func newMapa(o [3][3]obj) mapa {
 		{o10, o11},
 	}
 
-	m0 := newMapa(matrix)
+	m0 := newroom(matrix)
 	m0.size = 2
 	fmt.Println(m0)
 	m0.writeMap()*/
