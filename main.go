@@ -17,10 +17,14 @@ type character struct {
 	hp       int
 	pocket   map[string]int
 }
+type enemies struct {
+	m [5]character
+}
 
 type room struct {
 	size   int
 	matrix [16][16]obj
+	lvl    int
 }
 
 func newRoomStr(o [16][16]string) room {
@@ -38,6 +42,7 @@ func newRoomStr(o [16][16]string) room {
 
 func (m room) writeMap() {
 	fmt.Println("\033[2J") //only in bash
+	fmt.Println("Lvl:", m.lvl)
 	for i := 0; i < m.size; i++ {
 		for j := 0; j < m.size; j++ {
 			o := m.matrix[i][j]
@@ -46,6 +51,14 @@ func (m room) writeMap() {
 		fmt.Print("\n")
 	}
 }
+func moveCharacter(x int, y int, ch *character, m *room) {
+	if m.matrix[x][y].typeChar == " " {
+		m.matrix[ch.x][ch.y].typeChar = " "
+		m.matrix[x][y].typeChar = ch.typeChar
+		ch.x, ch.y = x, y
+	}
+}
+
 func movePlayer(x int, y int, pl *character, m *room) bool { //bool true - new lvl
 	if m.matrix[x][y].typeChar == " " {
 		m.matrix[pl.x][pl.y].typeChar = " "
@@ -90,7 +103,7 @@ func game(player *character, currentRoom *room) bool {
 		case 'd':
 			x = player.x
 			y = player.y + 1
-		case 'v':
+		case 'v': //v = exit
 			nextLvl = false
 			return nextLvl
 		default:
@@ -112,6 +125,7 @@ func main() {
 		hp:       100,
 		pocket:   make(map[string]int),
 	}
+
 	room0 := newRoomStr([16][16]string{
 		{"■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■"},
 		{"■", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "■"},
@@ -130,9 +144,9 @@ func main() {
 		{"■", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "■"},
 		{"■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■"},
 	})
-	room1 := newRoomStr([16][16]string{
+	room1 := newRoomStr([16][16]string{ //7x4
 		{"■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■"},
-		{"■", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "■", " ", " ", " ", "■"},
+		{"■", " ", " ", " ", " ", " ", " ", " ", " ", "■", " ", "■", " ", " ", " ", "■"},
 		{"■", " ", "■", "■", " ", "■", " ", " ", " ", "■", " ", " ", " ", "■", " ", "■"},
 		{"■", " ", "⊞", "■", " ", "■", "■", " ", " ", "■", " ", "■", "■", "■", " ", "■"},
 		{"■", " ", " ", "■", " ", " ", "■", " ", " ", "■", " ", " ", "■", " ", " ", "■"},
@@ -148,6 +162,8 @@ func main() {
 		{"■", " ", " ", " ", " ", " ", " ", "■", " ", " ", " ", " ", " ", " ", " ", "■"},
 		{"■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■", "■"},
 	})
+	room0.lvl = 0
+	room1.lvl = 1
 	if game(&player, &room0) == false {
 		return
 	}
