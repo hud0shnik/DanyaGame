@@ -59,15 +59,45 @@ func writeMap(m *room) {
 		fmt.Print("\n")
 	}
 }
+
 func d(m *room) {
-	for i := 0; i < 3; i++ {
+	for i := 0; i < 4; i++ {
+		for j := 3; j > 0; j-- {
+			if m.matrix[i][j].typeChar == " " {
+				m.matrix[i][j].typeChar = m.matrix[i][j-1].typeChar
+				m.matrix[i][j-1].typeChar = " "
+			}
+		}
 		for j := 0; j < 3; j++ {
-			if m.matrix[i][j].typeChar == m.matrix[i][j+1].typeChar {
+			if m.matrix[i][j].typeChar == m.matrix[i][j+1].typeChar && m.matrix[i][j].typeChar != " " {
 				neww, _ := strconv.Atoi(m.matrix[i][j].typeChar)
 				m.matrix[i][j].typeChar = " "
 				m.matrix[i][j+1].typeChar = strconv.Itoa(neww * 2)
 			} else if m.matrix[i][j+1].typeChar == " " {
 				m.matrix[i][j+1].typeChar = m.matrix[i][j].typeChar
+				m.matrix[i][j].typeChar = " "
+			}
+		}
+
+	}
+	writeMap(m)
+}
+
+func a(m *room) {
+	for i := 0; i < 4; i++ { // _ _ _ 2
+		for j := 3; j > 0; j-- {
+			if m.matrix[i][j-1].typeChar == " " {
+				m.matrix[i][j-1].typeChar = m.matrix[i][j].typeChar
+				m.matrix[i][j-1].typeChar = " "
+			}
+		}
+		for j := 3; j > 0; j-- { // 2 _ 2 _
+			if m.matrix[i][j].typeChar == m.matrix[i][j-1].typeChar && m.matrix[i][j].typeChar != " " {
+				neww, _ := strconv.Atoi(m.matrix[i][j].typeChar)
+				m.matrix[i][j].typeChar = " "
+				m.matrix[i][j-1].typeChar = strconv.Itoa(neww * 2)
+			} else if m.matrix[i][j-1].typeChar == " " {
+				m.matrix[i][j-1].typeChar = m.matrix[i][j].typeChar
 				m.matrix[i][j].typeChar = " "
 			}
 		}
@@ -85,6 +115,7 @@ func game(currentRoom *room) bool {
 		switch key[0] {
 		case 'w':
 		case 'a':
+			a(currentRoom)
 		case 's':
 		case 'd':
 			d(currentRoom)
