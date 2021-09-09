@@ -62,12 +62,6 @@ func writeMap(m *room) {
 
 func d(m *room) {
 	for i := 0; i < 4; i++ {
-		for j := 3; j > 0; j-- {
-			if m.matrix[i][j].typeChar == " " {
-				m.matrix[i][j].typeChar = m.matrix[i][j-1].typeChar
-				m.matrix[i][j-1].typeChar = " "
-			}
-		}
 		for j := 0; j < 3; j++ {
 			if m.matrix[i][j].typeChar == m.matrix[i][j+1].typeChar && m.matrix[i][j].typeChar != " " {
 				neww, _ := strconv.Atoi(m.matrix[i][j].typeChar)
@@ -78,27 +72,33 @@ func d(m *room) {
 				m.matrix[i][j].typeChar = " "
 			}
 		}
+		for j := 3; j > 0; j-- {
+			if m.matrix[i][j].typeChar == " " {
+				m.matrix[i][j].typeChar = m.matrix[i][j-1].typeChar
+				m.matrix[i][j-1].typeChar = " "
+			}
+		}
 
 	}
 	writeMap(m)
 }
 
 func a(m *room) {
-	for i := 0; i < 4; i++ { // _ _ _ 2
-		for j := 3; j > 0; j-- {
-			if m.matrix[i][j-1].typeChar == " " {
-				m.matrix[i][j-1].typeChar = m.matrix[i][j].typeChar
-				m.matrix[i][j-1].typeChar = " "
-			}
-		}
-		for j := 3; j > 0; j-- { // 2 _ 2 _
-			if m.matrix[i][j].typeChar == m.matrix[i][j-1].typeChar && m.matrix[i][j].typeChar != " " {
+	for i := 0; i < 4; i++ {
+		for j := 3; j > 0; j-- { // _ _ 2 4
+			if m.matrix[i][j].typeChar != " " && m.matrix[i][j].typeChar == m.matrix[i][j-1].typeChar {
 				neww, _ := strconv.Atoi(m.matrix[i][j].typeChar)
 				m.matrix[i][j].typeChar = " "
 				m.matrix[i][j-1].typeChar = strconv.Itoa(neww * 2)
 			} else if m.matrix[i][j-1].typeChar == " " {
 				m.matrix[i][j-1].typeChar = m.matrix[i][j].typeChar
 				m.matrix[i][j].typeChar = " "
+			}
+		}
+		for j := 3; j > 0; j-- {
+			if m.matrix[i][j-1].typeChar == " " {
+				m.matrix[i][j-1].typeChar = m.matrix[i][j].typeChar
+				m.matrix[i][j-1].typeChar = " "
 			}
 		}
 
