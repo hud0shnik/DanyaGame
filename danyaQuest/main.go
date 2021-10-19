@@ -106,7 +106,19 @@ func game(player *character, enemy *character, currentRoom *room) bool {
 		case 'd':
 			x = player.x
 			y = player.y + 1
-		case 'v': //v -> exit
+		case 'W':
+			x = player.x - 2
+			y = player.y
+		case 'A':
+			x = player.x
+			y = player.y - 2
+		case 'S':
+			x = player.x + 2
+			y = player.y
+		case 'D':
+			x = player.x
+			y = player.y + 2
+		case 'v', 'q': //v or q -> exit
 			nextLvl = false
 			return nextLvl
 		default:
